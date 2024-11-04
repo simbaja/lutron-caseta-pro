@@ -21,6 +21,7 @@ CONF_TYPE = "type"
 CONF_SCENE_ID = "scene_id"
 CONF_AREA_NAME = "area_name"
 CONF_BUTTONS = "buttons"
+CONF_DIMMABLE = "dimmable"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -68,7 +69,7 @@ def _process_zones(devices, integration_report):
     """Process zones and append devices."""
     for zone in integration_report["LIPIdList"]["Zones"]:
         # _LOGGER.debug(zone)
-        device_obj = {CONF_ID: zone["ID"], CONF_NAME: zone["Name"], CONF_TYPE: "light"}
+        device_obj = {CONF_ID: zone["ID"], CONF_NAME: zone["Name"], CONF_TYPE: "light", CONF_DIMMABLE: True}
         if "Area" in zone and "Name" in zone["Area"]:
             device_obj[CONF_AREA_NAME] = zone["Area"]["Name"]
         devices.append(device_obj)

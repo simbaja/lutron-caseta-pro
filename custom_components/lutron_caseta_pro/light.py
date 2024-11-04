@@ -9,8 +9,8 @@ from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_TRANSITION,
     DOMAIN,
-    SUPPORT_BRIGHTNESS,
-    SUPPORT_TRANSITION,
+    LightEntityFeature,
+    ColorMode,
     LightEntity,
 )
 from homeassistant.const import (
@@ -27,6 +27,7 @@ from . import (
     ATTR_INTEGRATION_ID,
     CONF_AREA_NAME,
     CONF_TRANSITION_TIME,
+    CONF_DIMMABLE,
     DEFAULT_TYPE,
     Caseta,
     CasetaData,
@@ -102,7 +103,7 @@ class CasetaLight(CasetaEntity, LightEntity):
             # if available, prepend area name to light
             self._name = light[CONF_AREA_NAME] + " " + light[CONF_NAME]
         self._integration = int(light[CONF_ID])
-        self._is_dimmer = light[CONF_TYPE] == DEFAULT_TYPE
+        self._is_dimmer = light[CONF_DIMMABLE]
         self._is_on = False
         self._brightness = 0
         self._mac = mac
@@ -140,7 +141,12 @@ class CasetaLight(CasetaEntity, LightEntity):
     @property
     def supported_features(self):
         """Flag supported features."""
-        return (SUPPORT_BRIGHTNESS | SUPPORT_TRANSITION) if self._is_dimmer else 0
+        return LightEntityFeature.TRANSITION if self._is_dimmer else 0
+
+    @property
+    def supported_color_modes(self):
+        """Supported modes."""
+        return {ColorMode.BRIGHTNESS} if self._is_dimmer else {ColorMode.ONOFF}
 
     async def async_turn_on(self, **kwargs):
         """Instruct the light to turn on."""

@@ -8,10 +8,7 @@ import logging
 from homeassistant.components.cover import (
     ATTR_POSITION,
     DOMAIN,
-    SUPPORT_CLOSE,
-    SUPPORT_OPEN,
-    SUPPORT_SET_POSITION,
-    SUPPORT_STOP,
+    CoverEntityFeature,
     CoverEntity,
 )
 from homeassistant.const import CONF_DEVICES, CONF_HOST, CONF_ID, CONF_MAC, CONF_NAME
@@ -148,7 +145,7 @@ class CasetaCover(CasetaEntity, CoverEntity):
     @property
     def supported_features(self):
         """Flag supported features."""
-        return SUPPORT_OPEN | SUPPORT_CLOSE | SUPPORT_STOP | SUPPORT_SET_POSITION
+        return CoverEntityFeature.OPEN | CoverEntityFeature.CLOSE | CoverEntityFeature.SET_POSITION | CoverEntityFeature.STOP
 
     async def async_stop_cover(self, **kwargs):
         """Stop raising or lowering the shade."""

@@ -5,7 +5,7 @@ Provides fan functionality for Home Assistant.
 """
 import logging
 
-from homeassistant.components.fan import DOMAIN, SUPPORT_SET_SPEED, FanEntity
+from homeassistant.components.fan import DOMAIN, FanEntityFeature, FanEntity
 from homeassistant.const import CONF_DEVICES, CONF_HOST, CONF_ID, CONF_MAC, CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -100,7 +100,7 @@ class CasetaFan(CasetaEntity, FanEntity):
     @property
     def supported_features(self) -> int:
         """Flag supported features."""
-        return SUPPORT_SET_SPEED
+        return FanEntityFeature.SET_SPEED
 
     @property
     def speed_count(self) -> int:

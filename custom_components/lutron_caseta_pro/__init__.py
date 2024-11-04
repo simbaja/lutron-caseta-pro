@@ -40,6 +40,8 @@ CONF_SWITCH = "switch"
 CONF_COVER = "cover"
 CONF_TRANSITION_TIME = "default_transition_seconds"
 CONF_FAN = "fan"
+CONF_NONDIMMABLE = "nondimmable"
+CONF_DIMMABLE = "dimmable"
 DEFAULT_TYPE = "light"
 
 CONFIG_SCHEMA = vol.Schema(
@@ -60,6 +62,9 @@ CONFIG_SCHEMA = vol.Schema(
                                 ensure_list, [positive_int]
                             ),
                             vol.Optional(CONF_FAN): vol.All(
+                                ensure_list, [positive_int]
+                            ),
+                            vol.Optional(CONF_NONDIMMABLE): vol.All(
                                 ensure_list, [positive_int]
                             ),
                         }
@@ -209,7 +214,7 @@ async def async_setup_bridge(hass, config, fname, bridge):
                     CONF_HOST: bridge[CONF_HOST],
                     CONF_MAC: mac_address,
                     CONF_DEVICES: types[device_type],
-                    CONF_TRANSITION_TIME: transition_time,
+                    CONF_TRANSITION_TIME: transition_time
                 },
                 config,
             )
@@ -218,7 +223,7 @@ async def async_setup_bridge(hass, config, fname, bridge):
 
 async def _patch_device_types(bridge, devices):
     """Patch up the device listed based on user-provided config."""
-    for device_type in [CONF_SWITCH, CONF_COVER, CONF_FAN]:
+    for device_type in [CONF_SWITCH, CONF_COVER, CONF_FAN, CONF_NONDIMMABLE]:
         # if type was in the configuration yaml
         if device_type in bridge:
             # for each integration ID in the configuration
@@ -229,7 +234,12 @@ async def _patch_device_types(bridge, devices):
                 for existing in devices:
                     # if device ID in config matches existing device ID
                     if integration_id == existing[CONF_ID]:
-                        existing[CONF_TYPE] = device_type
+                        #change the type for everything but nondimmable
+                        if device_type != CONF_NONDIMMABLE:
+                            existing[CONF_TYPE] = device_type
+                        
+                        #all of these are not dimmable
+                        existing[CONF_DIMMABLE] = False
                         found = True
                         break
                 if not found:
@@ -447,6 +457,13 @@ class CasetaData:
 
         device = self._devices.get(integration)
         if device is None:
+            _LOGGER.debug(
+                "No DEVICE found for value: %s %d %d %d",
+                mode,
+                integration,
+                action,
+                value,
+            )
             return
 
         _LOGGER.debug(
