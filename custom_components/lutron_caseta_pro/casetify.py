@@ -37,7 +37,7 @@ async def async_load_integration_report(fname):
     """
     devices = []
     async with aiofiles.open(fname, encoding="utf-8") as conf_file:
-        integration_report = json.load(await conf_file.read())
+        integration_report = json.loads(await conf_file.read())
         # _LOGGER.debug(integration)
         if "LIPIdList" in integration_report:
             # lights and switches are in Zones

@@ -141,7 +141,7 @@ class CasetaLight(CasetaEntity, LightEntity):
     @property
     def supported_features(self):
         """Flag supported features."""
-        return LightEntityFeature.TRANSITION if self._is_dimmer else 0
+        return LightEntityFeature.TRANSITION if self._is_dimmer else LightEntityFeature(0)
 
     @property
     def supported_color_modes(self):
