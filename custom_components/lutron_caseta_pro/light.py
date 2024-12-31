@@ -144,6 +144,11 @@ class CasetaLight(CasetaEntity, LightEntity):
         return LightEntityFeature.TRANSITION if self._is_dimmer else LightEntityFeature(0)
 
     @property
+    def color_mode(self):
+        """Current color modes."""
+        return ColorMode.BRIGHTNESS if self._is_dimmer else ColorMode.ONOFF
+
+    @property
     def supported_color_modes(self):
         """Supported modes."""
         return {ColorMode.BRIGHTNESS} if self._is_dimmer else {ColorMode.ONOFF}

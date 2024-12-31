@@ -120,7 +120,7 @@ async def request_configuration(hass, config, host, bridge):
 
         # run setup
         _LOGGER.debug("Running setup for host %s", host)
-        hass.async_add_job(async_setup_bridge, hass, config, fname, bridge)
+        hass.async_create_task(async_setup_bridge, hass, config, fname, bridge)
         _LOGGER.debug("Releasing configurator.")
         configurator.request_done(request_id)
 
@@ -160,7 +160,7 @@ async def async_setup(hass, config):
                     host,
                     fname,
                 )
-                hass.async_add_job(request_configuration, hass, config, host, bridge)
+                hass.async_create_task(request_configuration, hass, config, host, bridge)
             else:
                 _LOGGER.debug("Loading Integration Report %s", fname)
                 await async_setup_bridge(hass, config, fname, bridge)
@@ -205,7 +205,7 @@ async def async_setup_bridge(hass, config, fname, bridge):
     for device_type in types:
         component = device_type
         _LOGGER.debug("Loading platform %s", component)
-        hass.async_add_job(
+        hass.async_create_task(
             discovery.async_load_platform(
                 hass,
                 component,
